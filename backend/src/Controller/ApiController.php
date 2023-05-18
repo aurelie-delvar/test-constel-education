@@ -81,6 +81,23 @@ class ApiController extends AbstractController
     }
 
     /**
+     * @Route("star/create", name="app_star_create", methods={"POST"})
+     */
+    public function create(Request $request, SerializerInterface $serializer, StarRepository $starRepository, EntityManagerInterface $doctrine) : JsonResponse
+    {
+        // j'essaye autre chose 
+        $jsonContent = $request->getContent();
+        dump($request);
+        $deserialise = $serializer->deserialize($jsonContent, Star::class, 'json');
+        $starRepository->add($deserialise, true);
+        $doctrine->persist($deserialise);
+        $doctrine->flush();
+
+        return $this->json(['Etoile OK'], Response::HTTP_CREATED);
+
+    }
+
+    /**
      * @Route("/star/remove/{id}", name="app_star_remove", requirements={"id"="\d+"}, methods={"DELETE"})
      */
     public function delete(Mentor $mentor): JsonResponse
