@@ -1,0 +1,7 @@
+POST http://localhost:8000/star/add
+content-type: application/json
+
+{
+    "mentorId" : 1,
+    "studentId" : 1
+}
