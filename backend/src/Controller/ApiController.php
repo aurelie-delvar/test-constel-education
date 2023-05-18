@@ -22,6 +22,13 @@ class ApiController extends AbstractController
      */
     public function add(Request $request, SerializerInterface $serializer, ValidatorInterface $validator, MentorRepository $mentorRepository, EntityManagerInterface $doctrine): JsonResponse
     {
+        // ce que je veux faire : 
+        // 1. Récupérer le contenu Json 
+        // 2. Le désérializer
+        // 3. Retrouver l'id du mentor concerné
+        // 4. Lui set son "hasStar" à true
+        // 5. Retourner une validation avec une 201
+
         // on récupère le json de la requête du front avec Request
         $jsonContent = $request->getContent();
         dump($jsonContent); // on reçoit un id de mentor et un id de student (de star)
@@ -54,8 +61,10 @@ class ApiController extends AbstractController
 
         }
 
+        // je valide le contenu $jsonStar avec le composant Validator
         $listError = $validator->validate($jsonStar);
 
+        // s'il y a au moins 1 erreur, je les indique et retourne une 422
         if (count($listError) > 0) {
 
             return $this->json(
@@ -72,13 +81,17 @@ class ApiController extends AbstractController
     }
 
     /**
-     * @Route("/star/remove", name="app_star_remove", methods={"DELETE"})
+     * @Route("/star/remove/{id}", name="app_star_remove", requirements={"id"="\d+"}, methods={"DELETE"})
      */
-    public function delete(): JsonResponse
-    {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/ApiController.php',
-        ]);
+    public function delete(Mentor $mentor): JsonResponse
+    {      
+        // je mets la propriété à false  
+        $mentor->setHasStar(false);
+
+        // je renvoie une réponse
+        return $this->json(
+            null,
+            Response::HTTP_NO_CONTENT
+        );
     }
 }
